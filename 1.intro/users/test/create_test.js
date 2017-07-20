@@ -1,14 +1,15 @@
 const assert = require('assert');
 const User = require('../src/user');
 
-describe('Creating users in the database', () => {
+describe('Creating records', () => {
+  it('saves a user', (done) => {
+    const meredith = new User({ name: 'Meredith' });
 
-    it('creates a user', (done) => {
-        const glen = new User({ name: "Glen Hickman", email: "gchickma@us.ibm.com" });
-        glen.save()
-            .then(() => {
-                assert(!glen.isNew);
-                done();
-            })
-    })
+    meredith.save()
+      .then(() => {
+        // Has meredith been saved successfully?
+        assert(!meredith.isNew);
+        done();
+      });
+  });
 });
