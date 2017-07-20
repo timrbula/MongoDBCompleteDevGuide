@@ -6,14 +6,14 @@ describe('Validating records', () => {
         const user = new User({ name: undefined });
         const validationResult = user.validateSync();
         const { message } = validationResult.errors.name;
-        assert(message === 'User name is required.');
+        assert(message === 'Name is required.');
     });
 
     it('requires a user name to be long than 2 characters', () => {
         const user = new User({ name: 'MM' });
         const validationResult = user.validateSync();
         const { message } = validationResult.errors.name;
-        assert(message === 'User name must be longer that two characters.');
+        assert(message === 'Name must be longer that two characters.');
     })
 
     it('disallows invalid records from being saved', (done) => {
@@ -21,7 +21,7 @@ describe('Validating records', () => {
         user.save()
             .catch((validationResult) => {
                 const { message } = validationResult.errors.name;
-                assert(message === 'User name must be longer that two characters.');
+                assert(message === 'Name must be longer that two characters.');
                 done();
             });
     });

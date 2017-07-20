@@ -6,7 +6,7 @@ mongoose.Promise = global.Promise;
 
 //connect to MongoDB collection
 before((done) => {
-    mongoose.connect('mongodb://localhost/users_test');
+    mongoose.connect('mongodb://localhost:27017/users_test');
     mongoose.connection
         .once('open', () => done())
         .on('error', (error) => {
@@ -14,16 +14,16 @@ before((done) => {
         });
 })
 
-//drop users collection before each test˜
+//drop users collection before each test
 beforeEach((done) => {
-    const { users, blogposts, comments } = mongoose.connection.collections;
-    // users.drop(() => {
-    //     blogposts.drop(() => {
-    //         comments.drop(() => {
-    //             done();
-    //         });
-    //     });
-    // });
+    const { users, comments, blogposts } = mongoose.connection.collections;
+    users.drop(() => {
+        comments.drop(() => {
+             blogposts.drop(() => {
+                done();
+            });
+         });
+    });
 });
 
 

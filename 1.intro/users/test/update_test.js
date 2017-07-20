@@ -1,64 +1,61 @@
 const assert = require('assert');
 const User = require('../src/user');
 
-describe('Update users in the database', () => {
-    let joe;
+describe('Updating records', () => {
+  let joe;
 
-    beforeEach(done => {
-        joe = new User({ name: "Joe", favorites: 0 });
-        joe.save()
-            .then(() => done());
-    });
+  beforeEach((done) => {
+    joe = new User({ name: 'Joe', likes: 0 });
+    joe.save()
+      .then(() => done());
+  });
 
-    const assertName = (operation, done) => {
-        operation
-            .then(() => User.findOne({ name: "Meredith"})
-            .then(user => {
-                assert(user.name === "Meredith")
-                done();
-            })
-        );
-    }
+  function assertName(operation, done) {
+    operation
+      .then(() => User.find({}))
+      .then((users) => {
+        assert(users.length === 1);
+        assert(users[0].name === 'Alex');
+        done();
+      });
+  }
 
-    it('model instance update', done => {
-       assertName(
-           joe.update({ name: 'Meredith' }),
-           done
-        );
-    });
+  it('instance type using set n save', (done) => {
+    joe.set('name', 'Alex');
+    assertName(joe.save(), done);
+  });
 
-    it('model instance set & save', done => {
-        joe.set('name', 'Meredith')
-        assertName(joe.save(), done);
-    });
+  it('A model instance can update', (done) => {
+    assertName(joe.update({ name: 'Alex' }), done);
+  });
 
-    it('model class method update', done => {
-        assertName(
-            User.update({ name: 'Joe' }, { name: 'Meredith'}), 
-            done
-        );
-    })
+  it('A model class can update', (done) => {
+    assertName(
+      User.update({ name: 'Joe' }, { name: 'Alex' }),
+      done
+    );
+  });
 
-    it('model class method findOneAndUpdate', done => {
-        assertName(
-            User.findOneAndUpdate({ name: 'Joe' }, { name: 'Meredith'}), 
-            done
-        );
-    })
+  it('A model class can update one record', (done) => {
+    assertName(
+      User.findOneAndUpdate({ name: 'Joe' }, { name: 'Alex' }),
+      done
+    );
+  });
 
-    it('class method findByIdAndUpdate', done => {
-        assertName(
-            User.findByIdAndUpdate(joe._id, { name: "Meredith" }), 
-            done
-        );
-    })
+  it('A model class can find a record with an Id and update', (done) => {
+    assertName(
+      User.findByIdAndUpdate(joe._id, { name: 'Alex' }),
+      done
+    );
+  });
 
-    it('a user can have their favorites updated by 1', done => {
-        User.update({ name: "Joe"}, { $inc: { favorites: 1 } })
-            .then(() => User.findOne({ name: 'Joe' }))
-            .then((user) => {
-                assert(user.favorites === 1);
-                done();
-            });
-    });
+  it('A user can have their postcount incremented by 1', (done) => {
+    User.update({ name: 'Joe' }, { $inc: { likes: 1 } })
+      .then(() => User.findOne({ name: 'Joe' }))
+      .then((user) => {
+        assert(user.likes === 1);
+        done();
+      });
+  });
 });
